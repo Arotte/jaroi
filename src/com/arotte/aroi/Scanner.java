@@ -79,17 +79,20 @@ class Scanner {
 
             // slash
             case ('/') -> {
+                // regular comment with "//"
                 if (match('/')) {
                     // a comment goes until the end of the line
                     while (peek() != '\n' && !isAtEnd()) advance();
+
+                // multiline comment with "/* */"
                 } else if (match('*')) {
-                    // multiline comment
                     while (!match('*') && peekNext() != '/' && !isAtEnd()) {
                         advance();
                         if (match('\n')) line++;
                     }
                     // consume the last "/"
                     advance();
+
                 } else {
                     addToken(TokenType.SLASH);
                 }
