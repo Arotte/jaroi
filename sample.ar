@@ -1,5 +1,10 @@
 // this is a comment
 
+/* I am
+a
+multiline
+comment */
+
 // grouping stuff
 (()) {{}}
 
@@ -32,4 +37,4 @@ if (myIdentifier == 42) {
 // "hello, I'm an unterminated string!
 
 // error: unexpected character
-// ^
+^

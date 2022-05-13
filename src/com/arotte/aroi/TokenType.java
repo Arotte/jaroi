@@ -13,6 +13,7 @@ enum TokenType {
     EQUAL, EQUAL_EQUAL,
     GREATER, GREATER_EQUAL,
     LESS, LESS_EQUAL,
+    SLASH_STAR, STAR_SLASH, // multiline comments
 
     // literals
     IDENTIFIER, STRING, NUMBER,

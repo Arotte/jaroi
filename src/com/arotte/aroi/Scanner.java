@@ -72,22 +72,27 @@ class Scanner {
             case ('*') -> addToken(TokenType.STAR);
 
             // single or two character tokens
-            case ('!') -> addToken(
-                    match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
-            case ('=') -> addToken(
-                    match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
-            case ('>') -> addToken(
-                    match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
-            case ('<') -> addToken(
-                    match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+            case ('!') -> addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+            case ('=') -> addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+            case ('>') -> addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+            case ('<') -> addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
 
             // slash
             case ('/') -> {
-                // a comment goes until the end of the line
-                if (match('/'))
-                    while(peek() != '\n' && !isAtEnd()) advance();
-                else
+                if (match('/')) {
+                    // a comment goes until the end of the line
+                    while (peek() != '\n' && !isAtEnd()) advance();
+                } else if (match('*')) {
+                    // multiline comment
+                    while (!match('*') && peekNext() != '/' && !isAtEnd()) {
+                        advance();
+                        if (match('\n')) line++;
+                    }
+                    // consume the last "/"
+                    advance();
+                } else {
                     addToken(TokenType.SLASH);
+                }
             }
 
             // strings
