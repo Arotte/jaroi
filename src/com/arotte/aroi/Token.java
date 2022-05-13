@@ -1,5 +1,8 @@
 package com.arotte.aroi;
 
+/**
+ *
+ */
 class Token {
     final TokenType type;
     final String lexeme;
