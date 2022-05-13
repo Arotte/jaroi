@@ -67,15 +67,40 @@ class Scanner {
                     addToken(TokenType.SLASH);
             }
 
-            // string
+            // strings
             case ('"') -> string();
 
             // newlines and whitespaces
             case ' ', '\r', '\t' -> { }
             case ('\n') -> line++;
 
-            default -> Aroi.error(line, "Unexpected character.");
+            default -> {
+                if (isDigit(c)) // number literals
+                    number();
+                else
+                    Aroi.error(line, "Unexpected character.");
+            }
         }
+    }
+
+    private void number() {
+        // consume number until "."
+        while(isDigit(peek())) advance();
+
+        // look for a fractional part
+        if (peek() == '.' && isDigit(peekNext())) {
+            // consume the "."
+            advance();
+
+            // consume the number after the "."
+            while (isDigit(peek())) advance();
+        }
+
+        // add number token
+        addToken(TokenType.NUMBER,
+                Double.parseDouble(
+                        source.substring(start, current)
+                ));
     }
 
     private void string() {
@@ -111,6 +136,16 @@ class Scanner {
         // one character lookahead, does not consume chars
         if (isAtEnd()) return '\0';
         return source.charAt(current);
+    }
+
+    private char peekNext() {
+        // two-character lookahead, does not consume chars
+        if (current + 1 >= source.length()) return '\0';
+        return source.charAt(current + 1);
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     private boolean isAtEnd() {

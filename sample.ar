@@ -7,10 +7,19 @@
 ! != = == < <= > >=
 . , + - ; / *
 
-// a string
+// strings
 "hello, I'm a string!"
+
 "strings can be multiline
 as well, how cool!"
 
-// an unterminated string
-"hello, I'm an unterminated string!
+// numbers
+2123
+222
+111.11111
+
+// error: unterminated string
+// "hello, I'm an unterminated string!
+
+// error: unexpected character
+// ^
