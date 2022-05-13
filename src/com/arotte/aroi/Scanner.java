@@ -36,16 +36,57 @@ class Scanner {
     private void scanToken() {
         char c = advance();
         switch (c) {
-            case('('): addToken(TokenType.LEFT_PAREN); break;
-            case(')'): addToken(TokenType.RIGHT_PAREN); break;
-            case('{'): addToken(TokenType.LEFT_BRACE); break;
-            case('}'): addToken(TokenType.RIGHT_BRACE); break;
-            case(','): addToken(TokenType.COMMA); break;
-            case('.'): addToken(TokenType.DOT); break;
-            case('+'): addToken(TokenType.PLUS); break;
-            case(';'): addToken(TokenType.SEMICOLON); break;
-            case('*'): addToken(TokenType.STAR); break;
+            // single-character tokens
+            case ('(') -> addToken(TokenType.LEFT_PAREN);
+            case (')') -> addToken(TokenType.RIGHT_PAREN);
+            case ('{') -> addToken(TokenType.LEFT_BRACE);
+            case ('}') -> addToken(TokenType.RIGHT_BRACE);
+            case (',') -> addToken(TokenType.COMMA);
+            case ('.') -> addToken(TokenType.DOT);
+            case ('+') -> addToken(TokenType.PLUS);
+            case (';') -> addToken(TokenType.SEMICOLON);
+            case ('*') -> addToken(TokenType.STAR);
+
+            // single or two character tokens
+            case ('!') -> addToken(
+                    match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+            case ('=') -> addToken(
+                    match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+            case ('>') -> addToken(
+                    match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+            case ('<') -> addToken(
+                    match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+
+            // slash
+            case ('/') -> {
+                // a comment goes until the end of the line
+                if (match('/'))
+                    while(peek() != '\n' && !isAtEnd()) advance();
+                else
+                    addToken(TokenType.SLASH);
+            }
+
+            // newlines and whitespaces
+            case ' ', '\r', '\t' -> { }
+            case ('\n') -> line++;
+
+            default -> Aroi.error(line, "Unexpected character.");
         }
+    }
+
+    private boolean match(char expected) {
+        if (isAtEnd()) return false;
+        if (source.charAt(current) != expected) return false;
+
+        // if match found, consume character
+        current++;
+        return true;
+    }
+
+    private char peek() {
+        // one character lookahead, does not consume chars
+        if (isAtEnd()) return '\0';
+        return source.charAt(current);
     }
 
     private boolean isAtEnd() {
