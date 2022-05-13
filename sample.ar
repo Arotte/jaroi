@@ -1,0 +1,16 @@
+// this is a comment
+
+// grouping stuff
+(()) {{}}
+
+// operators
+! != = == < <= > >=
+. , + - ; / *
+
+// a string
+"hello, I'm a string!"
+"strings can be multiline
+as well, how cool!"
+
+// an unterminated string
+"hello, I'm an unterminated string!

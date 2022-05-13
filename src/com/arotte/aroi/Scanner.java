@@ -43,6 +43,7 @@ class Scanner {
             case ('}') -> addToken(TokenType.RIGHT_BRACE);
             case (',') -> addToken(TokenType.COMMA);
             case ('.') -> addToken(TokenType.DOT);
+            case ('-') -> addToken(TokenType.MINUS);
             case ('+') -> addToken(TokenType.PLUS);
             case (';') -> addToken(TokenType.SEMICOLON);
             case ('*') -> addToken(TokenType.STAR);
@@ -66,12 +67,35 @@ class Scanner {
                     addToken(TokenType.SLASH);
             }
 
+            // string
+            case ('"') -> string();
+
             // newlines and whitespaces
             case ' ', '\r', '\t' -> { }
             case ('\n') -> line++;
 
             default -> Aroi.error(line, "Unexpected character.");
         }
+    }
+
+    private void string() {
+        // consume the string
+        while (peek() != '"' && !isAtEnd()) {
+            if (peek() == '"') line++;
+            advance();
+        }
+
+        if (isAtEnd()) {
+            Aroi.error(line, "Unterminated string");
+            return;
+        }
+
+        // consume the closing "
+        advance();
+
+        // trim the surrounding "s
+        String value = source.substring(start + 1, current - 1);
+        addToken(TokenType.STRING, value);
     }
 
     private boolean match(char expected) {
