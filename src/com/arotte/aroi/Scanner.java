@@ -1,7 +1,9 @@
 package com.arotte.aroi;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -10,12 +12,33 @@ class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
 
-    // bookkeeping
+    // reserved keywords
+    private static final Map<String, TokenType> keywords;
+    static {
+        keywords = new HashMap<>();
+        keywords.put("and", TokenType.AND);
+        keywords.put("class", TokenType.CLASS);
+        keywords.put("else", TokenType.ELSE);
+        keywords.put("false", TokenType.FALSE);
+        keywords.put("fun", TokenType.FUN);
+        keywords.put("for", TokenType.FOR);
+        keywords.put("if", TokenType.IF);
+        keywords.put("nil", TokenType.NIL);
+        keywords.put("or", TokenType.OR);
+        keywords.put("print", TokenType.PRINT);
+        keywords.put("return", TokenType.RETURN);
+        keywords.put("super", TokenType.SUPER);
+        keywords.put("this", TokenType.THIS);
+        keywords.put("true", TokenType.TRUE);
+        keywords.put("var", TokenType.VAR);
+        keywords.put("while", TokenType.WHILE);
+    }
+
     // first character of a lexeme
     private int start = 0;
     // character currently being considered
     private int current = 0;
-    // line of current
+    // line of current character
     private int line = 1;
 
     Scanner(String source) {
@@ -75,12 +98,30 @@ class Scanner {
             case ('\n') -> line++;
 
             default -> {
-                if (isDigit(c)) // number literals
+                // number literals
+                if (isDigit(c))
                     number();
+                // identifiers
+                else if (isAlpha(c))
+                    identifier();
                 else
                     Aroi.error(line, "Unexpected character.");
             }
         }
+    }
+
+    private void identifier() {
+        // consume the identifier
+        while(isAlphanumeric(peek())) advance();
+
+        // check if the identifier is reserved keyword
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text);
+
+        // if not, it is a regular, user-defined identifier
+        if (type == null) type = TokenType.IDENTIFIER;
+
+        addToken(type);
     }
 
     private void number() {
@@ -142,6 +183,16 @@ class Scanner {
         // two-character lookahead, does not consume chars
         if (current + 1 >= source.length()) return '\0';
         return source.charAt(current + 1);
+    }
+
+    private boolean isAlpha(char c) {
+        return (c >= 'a' && c <= 'z') ||
+               (c >= 'A' && c <= 'Z') ||
+                c == '_';
+    }
+
+    private boolean isAlphanumeric(char c) {
+        return isAlpha(c) || isDigit(c);
     }
 
     private boolean isDigit(char c) {

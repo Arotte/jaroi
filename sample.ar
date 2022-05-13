@@ -18,6 +18,16 @@ as well, how cool!"
 222
 111.11111
 
+// reserved keywords
+and class else false fun for if nil
+or print super this true var
+
+// identifiers
+var myIdentifier = 21
+if (myIdentifier == 42) {
+    print "Nice!"
+}
+
 // error: unterminated string
 // "hello, I'm an unterminated string!
 
