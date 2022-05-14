@@ -50,20 +50,45 @@ public class GenerateAst {
         writer.println(javadoc());
         writer.println("abstract class " + base + " {");
 
+        defineVisitor(writer);
+
         // the AST classes
+        System.out.println("Generating inner classes.");
         for (String type : grammar) {
             String className = type.split(":")[0].trim();
             String fields    = type.split(":")[1].trim();
             defineType(writer, className, fields);
-            System.out.println("Generating class '" + className + "'.");
+            System.out.println(tab(1) + "Class '" + className + "' generated.");
         }
+
+        // base accept() method for the visitor pattern
+        writer.println(tab(1) + "abstract <R> R accept(Visitor<R> visitor);");
 
         // end of class definition
         writer.println("}");
         writer.close();
 
         System.out.println("Done.");
-        System.out.println("Writing generated AST class to '" + path + "'.");
+        System.out.println("Saved to '" + path + "'.");
+    }
+
+    /**
+     * Define the visitor interface inside the base class.
+     * @param writer PrintWriter that prints the strings
+     */
+    private static void defineVisitor(PrintWriter writer) {
+        writer.println(tab(1) + "interface Visitor<R> {");
+
+        for (String type : grammar) {
+            String typeName = type.split(":")[0].trim();
+            writer.println(tab(2) +
+                    "R visit" + typeName + base + "(" + typeName + " " + base.toLowerCase() + ");"
+            );
+        }
+
+        writer.println(tab(1) + "}");
+        writer.println();
+        System.out.println("Visitor interface generated.");
     }
 
     private static void defineType(PrintWriter writer, String className, String fieldList) {
@@ -91,6 +116,7 @@ public class GenerateAst {
         // end of constructor and class definitions
         writer.println(tab(2) + "}");
         writer.println(tab(1) + "}");
+        writer.println();
     }
 
     private static String javadoc() {
