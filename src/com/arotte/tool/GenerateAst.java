@@ -39,7 +39,6 @@ public class GenerateAst {
     }
 
     private static void defineAst(String outputDir) throws IOException {
-
         String path = outputDir + "/" + base + ".java";
         PrintWriter writer = new PrintWriter(path, StandardCharsets.UTF_8);
 
@@ -97,12 +96,14 @@ public class GenerateAst {
                 "static class " + className + " extends " + base + " {");
 
         // fields of the class
+        writer.println(tab(2) + "// fields");
         String[] fields = fieldList.split(", ");
         for (String field : fields) {
             writer.println(tab(2) + "final " + field + ";");
         }
 
         // constructor
+        writer.println(tab(2) + "// constructor");
         writer.println(tab(2) +
                 className + "(" + fieldList + ") {");
 
@@ -113,8 +114,17 @@ public class GenerateAst {
                     "this." + name + " = " + name + ";");
         }
 
-        // end of constructor and class definitions
+        // end of constructor
         writer.println(tab(2) + "}");
+
+        // the Visitor pattern: override accept() function
+        writer.println(tab(2) + "// visitor pattern");
+        writer.println(tab(2) + "@Override");
+        writer.println(tab(2) + "<R> R accept(Visitor<R> visitor) {");
+        writer.println(tab(3) + "return visitor.visit" + className + base + "(this);");
+        writer.println(tab(2) + "}");
+
+        // end of class definition
         writer.println(tab(1) + "}");
         writer.println();
     }

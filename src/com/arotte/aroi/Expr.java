@@ -18,36 +18,64 @@ abstract class Expr {
   }
 
   static class Literal extends Expr {
+    // fields
     final Object value;
+    // constructor
     Literal(Object value) {
       this.value = value;
+    }
+    // visitor pattern
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitLiteralExpr(this);
     }
   }
 
   static class Grouping extends Expr {
+    // fields
     final Expr expression;
+    // constructor
     Grouping(Expr expression) {
       this.expression = expression;
+    }
+    // visitor pattern
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitGroupingExpr(this);
     }
   }
 
   static class Unary extends Expr {
+    // fields
     final Token operator;
     final Expr right;
+    // constructor
     Unary(Token operator, Expr right) {
       this.operator = operator;
       this.right = right;
     }
+    // visitor pattern
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitUnaryExpr(this);
+    }
   }
 
   static class Binary extends Expr {
+    // fields
     final Expr left;
     final Token operator;
     final Expr right;
+    // constructor
     Binary(Expr left, Token operator, Expr right) {
       this.left = left;
       this.operator = operator;
       this.right = right;
+    }
+    // visitor pattern
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitBinaryExpr(this);
     }
   }
 
