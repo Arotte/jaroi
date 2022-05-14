@@ -160,7 +160,7 @@ class Scanner {
         }
 
         if (isAtEnd()) {
-            Aroi.error(line, "Unterminated string");
+            Aroi.error(line, "Unterminated string.");
             return;
         }
 

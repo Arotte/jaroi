@@ -33,8 +33,8 @@ if (myIdentifier == 42) {
     print "Nice!"
 }
 
-// error: unterminated string
-// "hello, I'm an unterminated string!
-
 // error: unexpected character
-// ^
+^
+
+// error: unterminated string
+"hello, I'm an unterminated string!
