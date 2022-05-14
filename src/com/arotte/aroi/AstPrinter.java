@@ -12,22 +12,33 @@ public class AstPrinter implements Expr.Visitor<String> {
 
     @Override
     public String visitLiteralExpr(Expr.Literal expr) {
-        return null;
+        if (expr.value == null) return "nil";
+        return expr.value.toString();
     }
 
     @Override
     public String visitGroupingExpr(Expr.Grouping expr) {
-        return null;
+        return parenthesize(
+                "group",
+                expr.expression
+        );
     }
 
     @Override
     public String visitUnaryExpr(Expr.Unary expr) {
-        return null;
+        return parenthesize(
+                expr.operator.lexeme,
+                expr.right
+        );
     }
 
     @Override
     public String visitBinaryExpr(Expr.Binary expr) {
-        return null;
+        return parenthesize(
+                expr.operator.lexeme,
+                expr.left,
+                expr.right
+        );
     }
 
     private String parenthesize(String name, Expr... exprs) {
