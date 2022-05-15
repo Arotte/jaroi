@@ -26,76 +26,67 @@ public class Parser {
             return expression();
         } catch (ParseError e) {
             return null;
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            // TODO: report
-            return null;
         }
     }
 
     // =====================================================
     // rules
 
-    private Expr expression()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
+    private Expr expression() {
         return equality();
     }
 
-    private Expr equality()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
-        return parseLeftBinary(
-                Parser.class.getDeclaredMethod("term"),
-                TokenType.EQUAL_EQUAL, TokenType.BANG_EQUAL);
+    private Expr equality() {
+        Expr expr = comparison();
+        while (match(TokenType.EQUAL_EQUAL, TokenType.BANG_EQUAL)) {
+            Token operator = previous();
+            Expr right = comparison();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
     }
 
-    private Expr comparison()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
-        return parseLeftBinary(
-                Parser.class.getDeclaredMethod("comparison"),
-                TokenType.GREATER,
-                TokenType.GREATER_EQUAL,
-                TokenType.LESS,
-                TokenType.LESS_EQUAL
-        );
+    private Expr comparison() {
+        Expr expr = term();
+        while (match(TokenType.GREATER, TokenType.GREATER_EQUAL,
+                     TokenType.LESS,    TokenType.LESS_EQUAL)) {
+            Token operator = previous();
+            Expr right = term();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
     }
 
-    private Expr term()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
-        return parseLeftBinary(
-                Parser.class.getDeclaredMethod("factor"),
-                TokenType.MINUS,
-                TokenType.PLUS
-        );
+    private Expr term() {
+        Expr expr = factor();
+        while (match(TokenType.MINUS, TokenType.PLUS)) {
+            Token operator = previous();
+            Expr right = factor();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
     }
 
-    private Expr factor()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
-        return parseLeftBinary(
-                Parser.class.getDeclaredMethod("unary"),
-                TokenType.SLASH,
-                TokenType.STAR
-        );
+    private Expr factor() {
+        Expr expr = unary();
+        while (match(TokenType.SLASH, TokenType.STAR)) {
+            Token operator = previous();
+            Expr right = unary();
+            expr = new Expr.Binary(expr, operator, right);
+        }
+        return expr;
     }
 
-    private Expr unary()
-            throws InvocationTargetException, NoSuchMethodException, IllegalAccessException
-    {
+    private Expr unary() {
         if (match(TokenType.BANG, TokenType.MINUS)) {
             Token operator = previous();
             Expr right = unary();
             return new Expr.Unary(operator, right);
         }
-
         return primary();
     }
 
-    private Expr primary()
-            throws InvocationTargetException, NoSuchMethodException, IllegalAccessException
-    {
+    private Expr primary() {
         if (match(TokenType.TRUE)) return new Expr.Literal(true);
         if (match(TokenType.FALSE)) return new Expr.Literal(false);
         if (match(TokenType.NIL)) return new Expr.Literal(null);
@@ -115,28 +106,6 @@ public class Parser {
         }
 
         throw error(peek(), "No expected expression found.");
-    }
-
-    // =====================================================
-    // general/common parser helpers
-
-    private Expr parseLeftBinary( Method ruleMethod, TokenType... types)
-            throws InvocationTargetException, IllegalAccessException {
-        // helper method for parsing left-associative binary operators
-
-        // left-hand side of the expression
-        Expr expr = (Expr) ruleMethod.invoke(Parser.class);
-
-        // right-hand side of the expression
-        // if no operator found, we have reached the end of the expression
-        while (match(types)) {
-            // add a new binary expression
-            Token operator = previous();
-            Expr right = (Expr) ruleMethod.invoke(Parser.class);
-            expr = new Expr.Binary(expr, operator, right);
-        }
-
-        return expr;
     }
     
     // =====================================================
