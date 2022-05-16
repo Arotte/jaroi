@@ -12,7 +12,10 @@ import java.util.List;
  *
  */
 public class Aroi {
+    private static final Interpreter interpreter = new Interpreter();
+
     static boolean hadError = false;
+    static boolean hadRuntimeError = false;
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -31,6 +34,7 @@ public class Aroi {
 
         // indicate an error in the exit code
         if (hadError) System.out.println(65);
+        if (hadRuntimeError) System.out.println(70);
     }
 
     private static void runPrompt() throws IOException {
@@ -47,16 +51,19 @@ public class Aroi {
     }
 
     private static void run(String source) {
+        // 1., scan tokens from raw source
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
+
+        // 2., parse tokens and construct AST
         Parser parser = new Parser(tokens);
         Expr expression = parser.parse();
 
         // stop if there was a syntax error
         if (hadError) return;
 
-        // print the parsed AST
-        System.out.println(new AstPrinter().print(expression));
+        // 3., interpret (execute) the AST
+        interpreter.interpret(expression);
     }
 
     static void error(int line, String message) {
@@ -69,6 +76,13 @@ public class Aroi {
         } else {
             report(token.line, " at '" + token.lexeme + "'", message);
         }
+    }
+
+    static void runtimeError(RuntimeError error) {
+        System.err.println(
+                error.getMessage() + "\n[line " + error.token.line + "]"
+        );
+        hadRuntimeError = true;
     }
 
     private static void report(int line, String where,

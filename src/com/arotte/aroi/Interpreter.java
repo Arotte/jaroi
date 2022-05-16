@@ -2,6 +2,15 @@ package com.arotte.aroi;
 
 public class Interpreter implements Expr.Visitor<Object> {
 
+    void interpret(Expr expr) {
+        try {
+            Object result = evaluate(expr);
+            System.out.println(stringify(result));
+        } catch (RuntimeError e) {
+            Aroi.runtimeError(e);
+        }
+    }
+
     @Override
     public Object visitLiteralExpr(Expr.Literal expr) {
         return expr.value;
@@ -63,9 +72,11 @@ public class Interpreter implements Expr.Visitor<Object> {
             case PLUS:
                 if (left instanceof Double && right instanceof Double)
                     return (double)left + (double)right;
+
                 if (left instanceof String && right instanceof String)
                     return (String)left + (String)right;
-                throw new RuntimeError(expr.operator, "Operands must be of two numbers of two strings.");
+
+                throw new RuntimeError(expr.operator, "Operands must be either numbers or strings");
         }
 
         // unreachable
@@ -101,5 +112,18 @@ public class Interpreter implements Expr.Visitor<Object> {
         // operands must be Doubles
         if (left instanceof Double && right instanceof Double) return;
         throw new RuntimeError(operator, "Operands must be numbers.");
+    }
+
+    private String stringify(Object o) {
+        if (o == null) return "nil";
+
+        if (o instanceof Double) {
+            String txt = o.toString();
+            if (txt.endsWith(".0")) // remove ".0"
+                txt = txt.substring(0, txt.length() - 2);
+            return txt;
+        }
+
+        return o.toString();
     }
 }
