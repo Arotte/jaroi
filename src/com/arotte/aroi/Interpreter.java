@@ -49,6 +49,14 @@ public class Interpreter implements Expr.Visitor<Object> {
                 checkNumberOperands(expr.operator, left, right);
                 return (double)left / (double)right;
             case STAR:
+                // allow string multiplication
+                // eg. "s" * 2 will be "ss"
+                if (isLeftString(left, right))
+                    return ((String)left).repeat((int)(double)right);
+                if (isRightString(left, right))
+                    return ((String)right).repeat((int)(double)left);
+
+                // default case: both are numbers
                 checkNumberOperands(expr.operator, left, right);
                 return (double)left * (double)right;
             case GREATER:
@@ -77,9 +85,9 @@ public class Interpreter implements Expr.Visitor<Object> {
                     return (String)left + (String)right;
 
                 // support addition like "string" + 4 -> "string4"
-                if ((left instanceof String && right instanceof Double))
+                if (isLeftString(left, right))
                     return (String)left + stringify(right);
-                if ((left instanceof Double && right instanceof String))
+                if (isRightString(left, right))
                     return stringify(left) + (String)right;
 
                 throw new RuntimeError(expr.operator, "Operands must be either numbers or strings");
@@ -106,6 +114,14 @@ public class Interpreter implements Expr.Visitor<Object> {
 
         // use Java's built-in Object.equals method
         return a.equals(b);
+    }
+
+    private boolean isLeftString(Object left, Object right) {
+        return left instanceof String && right instanceof Double;
+    }
+
+    private boolean isRightString(Object left, Object right) {
+        return left instanceof Double && right instanceof String;
     }
 
     private void checkNumberOperand(Token operator, Object operand) {
