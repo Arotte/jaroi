@@ -1,6 +1,7 @@
 package com.arotte.aroi;
 
-public class Interpreter implements Expr.Visitor<Object> {
+public class Interpreter implements Expr.Visitor<Object>,
+                                    Stmt.Visitor<Void> {
 
     void interpret(Expr expr) {
         try {
@@ -97,6 +98,16 @@ public class Interpreter implements Expr.Visitor<Object> {
         }
 
         // unreachable
+        return null;
+    }
+
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt) {
         return null;
     }
 
