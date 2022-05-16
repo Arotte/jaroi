@@ -15,18 +15,6 @@ import java.util.List;
  * TODO: possibly rewrite this in a scripting language
  */
 public class GenerateAst {
-    private static final String base = "Expr";
-    private static List<String> grammar;
-    static {
-        // every element of the array corresponds to a rule in the grammar of the language.
-        grammar = new ArrayList<>();
-        grammar = Arrays.asList(
-                "Literal  : Object value",
-                "Grouping : " + base + " expression",
-                "Unary    : Token operator, " + base + " right",
-                "Binary   : " + base + " left, Token operator, " + base + " right"
-        );
-    }
 
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
@@ -34,29 +22,41 @@ public class GenerateAst {
             System.exit(64);
         }
         String outputDir = args[0];
-        // generate the Java class representing the AST
-        defineAst(outputDir);
+
+        // generate AST class for expressions
+        defineAst(outputDir, "Expr", Arrays.asList(
+                "Literal  : Object value",
+                "Grouping : Expr expression",
+                "Unary    : Token operator, Expr right",
+                "Binary   : Expr left, Token operator, Expr right"
+        ));
+
+        // generate AST class for statements
+        defineAst(outputDir, "Stmt", Arrays.asList(
+                "Expression : Expr expression",
+                "Print      : Expr expression"
+        ));
     }
 
-    private static void defineAst(String outputDir) throws IOException {
-        String path = outputDir + "/" + base + ".java";
+    private static void defineAst(String outputDir, String baseName, List<String> grammar) throws IOException {
+        String path = outputDir + "/" + baseName + ".java";
         PrintWriter writer = new PrintWriter(path, StandardCharsets.UTF_8);
 
         writer.println("package com.arotte.aroi;");
         writer.println();
         writer.println("import java.util.List;");
         writer.println();
-        writer.println(javadoc());
-        writer.println("abstract class " + base + " {");
+        writer.println(javadoc(baseName));
+        writer.println("abstract class " + baseName + " {");
 
-        defineVisitor(writer);
+        defineVisitor(writer, baseName, grammar);
 
         // the AST classes
         System.out.println("Generating inner classes.");
         for (String type : grammar) {
             String className = type.split(":")[0].trim();
             String fields    = type.split(":")[1].trim();
-            defineType(writer, className, fields);
+            defineType(writer, className, fields, baseName);
             System.out.println(tab(1) + "Class '" + className + "' generated.");
         }
 
@@ -75,7 +75,7 @@ public class GenerateAst {
      * Define the visitor interface inside the base class.
      * @param writer PrintWriter that prints the strings
      */
-    private static void defineVisitor(PrintWriter writer) {
+    private static void defineVisitor(PrintWriter writer, String base, List<String> grammar) {
         writer.println(tab(1) + "interface Visitor<R> {");
 
         for (String type : grammar) {
@@ -90,7 +90,7 @@ public class GenerateAst {
         System.out.println("Visitor interface generated.");
     }
 
-    private static void defineType(PrintWriter writer, String className, String fieldList) {
+    private static void defineType(PrintWriter writer, String className, String fieldList, String base) {
 
         writer.println(tab(1) +
                 "static class " + className + " extends " + base + " {");
@@ -129,7 +129,7 @@ public class GenerateAst {
         writer.println();
     }
 
-    private static String javadoc() {
+    private static String javadoc(String base) {
         return "/**" + base + ".java\n" +
                 " *\n" +
                 " * THIS IS A GENERATED FILE.\n" +
