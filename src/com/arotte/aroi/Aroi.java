@@ -57,13 +57,13 @@ public class Aroi {
 
         // 2., parse tokens and construct AST
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements = parser.parse();
 
         // stop if there was a syntax error
         if (hadError) return;
 
         // 3., interpret (execute) the AST
-        interpreter.interpret(expression);
+        interpreter.interpret(statements);
     }
 
     static void error(int line, String message) {

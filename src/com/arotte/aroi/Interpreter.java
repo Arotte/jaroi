@@ -1,12 +1,14 @@
 package com.arotte.aroi;
 
+import java.util.List;
+
 public class Interpreter implements Expr.Visitor<Object>,
                                     Stmt.Visitor<Void> {
 
-    void interpret(Expr expr) {
+    void interpret(List<Stmt> statements) {
         try {
-            Object result = evaluate(expr);
-            System.out.println(stringify(result));
+            for (Stmt statement : statements)
+                execute(statement);
         } catch (RuntimeError e) {
             Aroi.runtimeError(e);
         }
@@ -103,16 +105,23 @@ public class Interpreter implements Expr.Visitor<Object>,
 
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
+        evaluate(stmt.expression);
         return null;
     }
 
     @Override
     public Void visitPrintStmt(Stmt.Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
         return null;
     }
 
     private Object evaluate(Expr expr) {
         return expr.accept(this);
+    }
+
+    private void execute(Stmt stmt) {
+        stmt.accept(this);
     }
 
     private boolean isTruthy(Object object) {

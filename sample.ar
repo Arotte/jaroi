@@ -1,1 +1,9 @@
-!1231 < ("asdasd" == (11 - "asdasd" / true))
+print "hello world!";
+
+print (2 + 2) * 5;
+
+print "a" * 10;
+
+print true;
+
+print "string" + 10;
