@@ -12,7 +12,7 @@ program        -> statement* EOF ;
 statement      -> exprStmt | printStmt ;
 
 exprStmt       -> expression ";" ;
-printStmt      -> "print" expression ";" ; 
+printStmt      -> "scream" expression ";" ; 
         
 expression     -> equality ;
 equality       -> comparison ( ( "!=" | "==" ) comparison )* ;

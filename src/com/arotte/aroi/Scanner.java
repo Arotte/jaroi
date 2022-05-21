@@ -26,7 +26,7 @@ class Scanner {
         keywords.put("for", TokenType.FOR);
         keywords.put("nil", TokenType.NIL);
         keywords.put("or", TokenType.OR);
-        keywords.put("print", TokenType.PRINT);
+        keywords.put("scream", TokenType.PRINT);
         keywords.put("return", TokenType.RETURN);
         keywords.put("super", TokenType.SUPER);
         keywords.put("this", TokenType.THIS);
