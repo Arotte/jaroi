@@ -16,7 +16,8 @@ statement      -> exprStmt | printStmt ;
 exprStmt       -> expression ";" ;
 printStmt      -> "scream" expression ";" ; 
         
-expression     -> equality ;
+expression     -> assignment ;
+assignment     -> IDENTIFIER "=" assignment | equality ;
 equality       -> comparison ( ( "!=" | "==" ) comparison )* ;
 comparison     -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term           -> factor ( ( "-" | "+" ) factor )* ;
