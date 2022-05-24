@@ -44,7 +44,14 @@ public class Parser {
     }
 
     private Stmt varDeclaration() {
-        return null;
+        Token variableName = consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+        Expr initializer = null;
+        if (match(TokenType.EQUAL))
+            initializer = expression();
+
+        consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+        return new Stmt.Var(variableName, initializer);
     }
 
     private Stmt statement() {
@@ -137,6 +144,10 @@ public class Parser {
             consume(TokenType.RIGHT_PAREN, "Expected closing ')' after expression.");
             return new Expr.Grouping(expr);
         }
+
+        // variable identifier
+        if (match(TokenType.IDENTIFIER))
+            return new Expr.Variable(previous());
 
         throw error(peek(), "No expected expression found.");
     }
