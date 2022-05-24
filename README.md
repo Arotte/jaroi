@@ -7,10 +7,12 @@ Java implementation of the Aroi programming language.
 ## Grammar of Aroi
 
 ```
-program        -> statement* EOF ;
+program        -> declaration* EOF ;
+
+declaration    -> varDecl | statement ;
+varDecl        -> "var" IDENTIFIER ( "=" expression )? ";" ;
 
 statement      -> exprStmt | printStmt ;
-
 exprStmt       -> expression ";" ;
 printStmt      -> "scream" expression ";" ; 
         
@@ -21,10 +23,18 @@ term           -> factor ( ( "-" | "+" ) factor )* ;
 factor         -> unary ( ( "/" | "*" ) unary )* ;
 unary          -> ( "!" | "-" ) unary | primary ;
 
-primary        -> NUMBER | STRING | "true" | "false" | "nil"
-                 | "(" expression ")" ;
+primary        -> "true" | "false" | "nil" 
+                | NUMBER | STRING
+                | "(" expression ")"
+                | IDENTIFIER ;
 ```
 
+Symbol Explanations
+```
+*    -> allow repetition zero or more times
++    -> allow repetition one or more times
+?    -> can appear zero or one time
+```
 
 ## Acknowledgements
 

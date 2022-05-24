@@ -4,6 +4,9 @@ scream (2 + 2) * 5;
 
 scream "a" * 10;
 
+// testing zero division error
+// 10/0;
+
 scream true;
 
 scream "string" + 10;
