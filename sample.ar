@@ -10,3 +10,13 @@ scream "a" * 10;
 scream true;
 
 scream "string" + 10;
+
+// test variable declarations
+
+scream "======";
+var x = 10;
+var y = 11;
+scream "10 * 11 = " + x * y;
+
+var z;
+scream z;

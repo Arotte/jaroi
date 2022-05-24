@@ -6,22 +6,6 @@ package com.arotte.aroi;
  * Implements the Visitor interface.
  */
 public class AstPrinter implements Expr.Visitor<String> {
-    public static void main(String[] args) {
-        // function to test this class
-        // TODO: remove it and test the class with JUnit
-        Expr expression = new Expr.Binary(
-                new Expr.Unary(
-                        new Token(TokenType.PLUS, "+", null, 1),
-                        new Expr.Literal(42)
-                ),
-                new Token(TokenType.SLASH, "/", null, 1),
-                new Expr.Grouping(
-                        new Expr.Literal(69)
-                )
-        );
-        System.out.println(new AstPrinter().print(expression));
-    }
-
     String print(Expr expr) {
         return expr.accept(this);
     }
@@ -55,6 +39,11 @@ public class AstPrinter implements Expr.Visitor<String> {
                 expr.left,
                 expr.right
         );
+    }
+
+    @Override
+    public String visitVariableExpr(Expr.Variable expr) {
+        return expr.name.lexeme;
     }
 
     private String parenthesize(String name, Expr... exprs) {
