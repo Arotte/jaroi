@@ -28,13 +28,15 @@ public class GenerateAst {
                 "Literal  : Object value",
                 "Grouping : Expr expression",
                 "Unary    : Token operator, Expr right",
-                "Binary   : Expr left, Token operator, Expr right"
+                "Binary   : Expr left, Token operator, Expr right",
+                "Variable : Token name"
         ));
 
         // generate AST class for statements
         defineAst(outputDir, "Stmt", Arrays.asList(
                 "Expression : Expr expression",
-                "Print      : Expr expression"
+                "Print      : Expr expression",
+                "Var        : Token name, Expr initializer"
         ));
     }
 
