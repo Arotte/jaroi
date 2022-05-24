@@ -24,13 +24,28 @@ public class Parser {
 
     List<Stmt> parse() {
         List<Stmt> statements = new ArrayList<>();
-        while (!isAtEnd()) statements.add(statement());
+        while (!isAtEnd()) statements.add(declaration());
 
         return statements;
     }
 
     // =====================================================
     // rules
+
+    private Stmt declaration() {
+        try {
+            if (match(TokenType.VAR)) return varDeclaration();
+
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
+    }
+
+    private Stmt varDeclaration() {
+        return null;
+    }
 
     private Stmt statement() {
         if (match(TokenType.PRINT)) return printStatement();
