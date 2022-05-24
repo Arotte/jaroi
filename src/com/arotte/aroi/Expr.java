@@ -11,11 +11,28 @@ import java.util.List;
  */
 abstract class Expr {
   interface Visitor<R> {
+    R visitAssignExpr(Assign expr);
     R visitLiteralExpr(Literal expr);
     R visitGroupingExpr(Grouping expr);
     R visitUnaryExpr(Unary expr);
     R visitBinaryExpr(Binary expr);
     R visitVariableExpr(Variable expr);
+  }
+
+  static class Assign extends Expr {
+    // fields
+    final Token name;
+    final Expr value;
+    // constructor
+    Assign(Token name, Expr value) {
+      this.name = name;
+      this.value = value;
+    }
+    // visitor pattern
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitAssignExpr(this);
+    }
   }
 
   static class Literal extends Expr {
