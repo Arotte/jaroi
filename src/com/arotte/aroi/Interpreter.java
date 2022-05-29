@@ -149,12 +149,35 @@ public class Interpreter implements Expr.Visitor<Object>,
         return null;
     }
 
+    @Override
+    public Void visitBlockStmt(Stmt.Block stmt) {
+        executeBlock(stmt.statements, new Environment(environment));
+        return null;
+    }
+
+    // ====================================================
+
     private Object evaluate(Expr expr) {
         return expr.accept(this);
     }
 
     private void execute(Stmt stmt) {
         stmt.accept(this);
+    }
+
+    void executeBlock(List<Stmt> statements, Environment environment) {
+        Environment previous = this.environment;
+        try {
+            // temporarily change the environment of
+            // the interpreter to execute the list of statements
+            // inside the block scope
+            this.environment = environment;
+
+            for (Stmt statement : statements)
+                execute(statement);
+        } finally {
+            this.environment = previous;
+        }
     }
 
     private boolean isTruthy(Object object) {
