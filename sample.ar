@@ -20,3 +20,25 @@ scream "10 * 11 = " + x * y;
 
 var z;
 scream z;
+
+// testing scopes
+
+scream "testing scope";
+var a = "global a";
+var b = "global b";
+var c = "global c";
+scream a;
+scream b;
+scream c;
+{
+    var a = "scope 1 a";
+    var b = "scope 1 b";
+    scream a;
+    scream b;
+    scream c;
+    {
+        var a = "scope 2 a";
+        var b = "scope 2 b";
+        scream c;
+    }
+}

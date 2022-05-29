@@ -56,7 +56,7 @@ public class Parser {
 
     private Stmt statement() {
         if (match(TokenType.PRINT)) return printStatement();
-        if (match(TokenType.LEFT_PAREN)) return new Stmt.Block(block());
+        if (match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
 
         return expressionStatement();
     }
