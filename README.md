@@ -12,9 +12,12 @@ program        -> declaration* EOF ;
 declaration    -> varDecl | statement ;
 varDecl        -> "var" IDENTIFIER ( "=" expression )? ";" ;
 
-statement      -> exprStmt | printStmt ;
+statement      -> exprStmt
+                | printStmt
+                | block ;
 exprStmt       -> expression ";" ;
-printStmt      -> "scream" expression ";" ; 
+printStmt      -> "scream" expression ";" ;
+blcok          -> "{" declaration* "}" ; 
         
 expression     -> assignment ;
 assignment     -> IDENTIFIER "=" assignment | equality ;
