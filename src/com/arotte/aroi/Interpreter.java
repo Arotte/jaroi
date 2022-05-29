@@ -112,6 +112,14 @@ public class Interpreter implements Expr.Visitor<Object>,
         return environment.get(expr.name);
     }
 
+    @Override
+    public Object visitAssignExpr(Expr.Assign expr) {
+        Object value = evaluate(expr);
+        environment.assign(expr.name, value);
+        return value;
+    }
+
+
     // ====================================================
     // Statement visitors
 
