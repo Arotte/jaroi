@@ -49,3 +49,7 @@ var a = 1;
   var a = a + 2;
   scream a;
 }
+
+// conditionals
+
+if (!false) scream "YES!";
