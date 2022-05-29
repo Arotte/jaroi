@@ -119,6 +119,7 @@ public class Parser {
             Token equals = previous();
             // recursively parse the right-hand side
             Expr value = assignment();
+
             if (expr instanceof Expr.Variable) {
                 Token name = ((Expr.Variable)expr).name;
                 return new Expr.Assign(name, value);

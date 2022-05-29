@@ -53,3 +53,8 @@ var a = 1;
 // conditionals
 
 if (!false) scream "YES!";
+
+
+var i = 0;
+// i = i + 2;
+scream i;
