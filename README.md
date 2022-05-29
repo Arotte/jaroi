@@ -23,7 +23,7 @@ ifStmt         -> "if" "(" expression ")" statement
                   ( "else" statement )? ;
 printStmt      -> "scream" expression ";" ;
 whileStmt      -> "while" "(" expression ")" statement ;
-blcok          -> "{" declaration* "}" ; 
+block          -> "{" declaration* "}" ; 
         
 expression     -> assignment ;
 assignment     -> IDENTIFIER "=" assignment
