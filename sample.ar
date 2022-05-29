@@ -60,3 +60,8 @@ while (i < 10) {
     scream i * 2;
     i = i + 1;
 }
+
+
+for (var i = 0; i < 10; i = i + 1) {
+    scream "I'm in a for loop!!! " + i;
+}
