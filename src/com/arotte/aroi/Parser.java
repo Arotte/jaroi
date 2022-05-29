@@ -114,6 +114,7 @@ public class Parser {
                 return new Expr.Assign(name, value);
             }
 
+            // the error is not thrown because the parser is not in panic mode
             error(equals, "Invalid assignment target.");
         }
 
