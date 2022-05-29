@@ -49,58 +49,65 @@ public class Interpreter implements Expr.Visitor<Object>,
         Object right = evaluate(expr.right);
 
         switch (expr.operator.type) {
-            case MINUS:
+            case MINUS -> {
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left - (double)right;
-            case SLASH:
-                if ((double)right == 0)
+                return (double) left - (double) right;
+            }
+            case SLASH -> {
+                if ((double) right == 0)
                     throw new RuntimeError(expr.operator, "Dividing by zero is not cool.");
-
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left / (double)right;
-            case STAR:
+                return (double) left / (double) right;
+            }
+            case STAR -> {
                 // allow string multiplication
                 // eg. "s" * 2 will be "ss"
                 if (isLeftString(left, right))
-                    return ((String)left).repeat((int)(double)right);
+                    return ((String) left).repeat((int) (double) right);
                 if (isRightString(left, right))
-                    return ((String)right).repeat((int)(double)left);
+                    return ((String) right).repeat((int) (double) left);
 
                 // default case: both are numbers
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left * (double)right;
-            case GREATER:
+                return (double) left * (double) right;
+            }
+            case GREATER -> {
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left > (double)right;
-            case LESS:
+                return (double) left > (double) right;
+            }
+            case LESS -> {
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left < (double)right;
-            case GREATER_EQUAL:
+                return (double) left < (double) right;
+            }
+            case GREATER_EQUAL -> {
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left >= (double)right;
-            case LESS_EQUAL:
+                return (double) left >= (double) right;
+            }
+            case LESS_EQUAL -> {
                 checkNumberOperands(expr.operator, left, right);
-                return (double)left <= (double)right;
-            case BANG_EQUAL:
+                return (double) left <= (double) right;
+            }
+            case BANG_EQUAL -> {
                 checkNumberOperands(expr.operator, left, right);
                 return !isEqual(left, right);
-            case EQUAL_EQUAL:
+            }
+            case EQUAL_EQUAL -> {
                 checkNumberOperands(expr.operator, left, right);
                 return isEqual(left, right);
-            case PLUS:
+            }
+            case PLUS -> {
                 if (left instanceof Double && right instanceof Double)
-                    return (double)left + (double)right;
-
+                    return (double) left + (double) right;
                 if (left instanceof String && right instanceof String)
-                    return (String)left + (String)right;
+                    return (String) left + (String) right;
 
                 // support addition like "string" + 4 -> "string4"
                 if (isLeftString(left, right))
-                    return (String)left + stringify(right);
+                    return (String) left + stringify(right);
                 if (isRightString(left, right))
-                    return stringify(left) + (String)right;
-
+                    return stringify(left) + (String) right;
                 throw new RuntimeError(expr.operator, "Operands must be either numbers or strings");
+            }
         }
 
         // unreachable
