@@ -3,6 +3,7 @@ package com.arotte.aroi;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**Parser.java
@@ -58,6 +59,7 @@ public class Parser {
         if (match(TokenType.IF)) return ifStatement();
         if (match(TokenType.PRINT)) return printStatement();
         if (match(TokenType.WHILE)) return whileStatement();
+        if (match(TokenType.FOR)) return forStatement();
         if (match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
 
         return expressionStatement();
@@ -89,6 +91,54 @@ public class Parser {
         Stmt body = statement();
 
         return new Stmt.While(condition, body);
+    }
+
+    private Stmt forStatement() {
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+        // initializer of the for
+        Stmt initializer;
+        if (match(TokenType.SEMICOLON)) {
+            initializer = null;
+        } else if (match(TokenType.VAR)) {
+            initializer = varDeclaration();
+        } else {
+            initializer = expressionStatement();
+        }
+
+        Expr condition = null;
+        if (!check(TokenType.SEMICOLON))
+            condition = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after loop condition");
+
+        Expr increment = null;
+        if (!check(TokenType.RIGHT_PAREN))
+            increment = expression();
+        consume(TokenType.RIGHT_PAREN, "Expect closing ')' after for clauses.");
+
+        // Note: for statements do not have a separate node in the AST
+        // Instead, they are desugared to while loops
+
+        Stmt body = statement();
+
+        // add increment expression after the body
+        if (increment != null) {
+            body = new Stmt.Block(Arrays.asList(
+                    body,
+                    new Stmt.Expression(increment)
+            ));
+        }
+
+        // if condition is empty, it is true by default
+        if (condition == null) condition = new Expr.Literal(true);
+        // add condition statement in front of the body
+        body = new Stmt.While(condition, body);
+
+        // add the initializer before the body
+        if (initializer != null)
+            body = new Stmt.Block(Arrays.asList(initializer, body));
+
+        return body;
     }
 
     private Stmt expressionStatement() {
