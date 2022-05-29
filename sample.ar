@@ -42,3 +42,10 @@ scream c;
         scream c;
     }
 }
+
+// sus
+var a = 1;
+{
+  var a = a + 2;
+  scream a;
+}
